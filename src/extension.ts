@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 import * as child_process from 'child_process';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -14,7 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
         const document = editor.document;
         const code = document.getText();
 
-        const tempDir = path.join(context.extensionPath, 'temp');
+        const tempDir = path.join(os.tmpdir(), 'run-dotnet-code');
         if (!fs.existsSync(tempDir)) {
             fs.mkdirSync(tempDir);
         }

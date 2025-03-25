@@ -22,11 +22,14 @@ export function activate(context: vscode.ExtensionContext) {
         const tempFile = path.join(tempDir, 'Program.cs');
         fs.writeFileSync(tempFile, code);
 
+        const csprojFile = path.join(tempDir, 'temp.csproj');
+        fs.writeFileSync(csprojFile, generateCsprojFile());
+
         const outputChannel = vscode.window.createOutputChannel('Run .NET Code');
         outputChannel.show(true);
         outputChannel.appendLine('Running .NET code...');
 
-        const command = `dotnet run --project ${tempDir}`;
+        const command = `dotnet run --project ${csprojFile}`;
         child_process.exec(command, (error, stdout, stderr) => {
             if (error) {
                 outputChannel.appendLine(`Error: ${error.message}`);
@@ -44,3 +47,15 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {}
+
+function generateCsprojFile(): string {
+    return `
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+</Project>
+`;
+}
